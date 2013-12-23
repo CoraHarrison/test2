@@ -1,0 +1,32 @@
+from tweepy import Stream
+from tweepy import OAuthHandler
+from tweepy.streaming import StreamListener
+import time
+
+ckey = '2MvYKjDr8Bf82fs7higJkg'
+csecret = '8IgjCPj3tj2Poll7QvU48bFW3gmCgOjSAZNYwYHA'
+atoken = '1876599600-1vBIxMjjvtwu3j5G1FjgVaNhAywnWZC5N5ViJpT'
+asecret = '6Lb1IMcPX72B9g2kI60kxtnZQrLtHrjNXFFGbOFbK7hPe'
+
+class listener(StreamListener):
+
+    def on_data(self, data):
+        try:
+            print data
+            saveFile = open('twitDB.csv','a')
+            saveFile.write(data)
+            saveFile.write('\n')
+            saveFile.close()
+            return True
+        except BaseException, e:
+            print 'failed ondata,' ,str(e)
+            time.sleep(5)
+
+    def on_error(self, status):
+        print status
+
+auth = OAuthHandler(ckey, csecret)
+auth.set_access_token(atoken, asecret)
+twitterStream = Stream(auth, listener())
+twitterStream.filter(track=["car"])
+
